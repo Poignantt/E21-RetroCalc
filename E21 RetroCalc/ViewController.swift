@@ -9,22 +9,28 @@
 import UIKit
 import AVFoundation
 
-/*
-Tags
- 10 - (+)
- 11 - (-)
- 12 - (x)
- 13 - (/)
- 14 - (=)
-*/
+
 
 class ViewController: UIViewController {
     
     var btnSound: AVAudioPlayer!
-    var digOutputValue: Float = 0.0
-    var str: String!
+    var runningNumber: String = ""
+    var rightValString: String = ""
+    var leftValString: String = ""
+    var result: String = ""
+    
+    enum Chode: String {
+        case Divide = "/"
+        case Multiply = "*"
+        case Add = "+"
+        case Subtract = "-"
+        case Empty = "Empty"
+    }
+    var currentOperation = Chode.Empty
     
     @IBOutlet weak var digOutput: UILabel!
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,19 +52,66 @@ class ViewController: UIViewController {
     }
     
     @IBAction func numberPressed(sender: UIButton) {
+        runningNumber += "\(sender.tag)"
+        digOutput.text = runningNumber
         playSound()
-        
-        
-        if digOutput.text != "0" {
-        digOutput.text = digOutput.text! + "\(sender.tag)"
-        }else{
-        digOutput.text = "\(sender.tag)"
+    }
+    
+    func processOperation(operation: Chode) {
+        if currentOperation != Chode.Empty {
+            playSound()
+            
+            if runningNumber != "" {
+                rightValString = runningNumber
+                runningNumber = ""
+                
+                if currentOperation == Chode.Multiply {
+                    result = "\(Double(leftValString)! * Double(rightValString)!)"
+                } else if currentOperation == Chode.Divide {
+                    result = "\(Double(leftValString)! / Double(rightValString)!)"
+                } else if currentOperation == Chode.Add {
+                    result = "\(Double(leftValString)! + Double(rightValString)!)"
+                } else if currentOperation == Chode.Subtract {
+                    result = "\(Double(leftValString)! - Double(rightValString)!)"
+                }
+                
+                leftValString = result
+                digOutput.text = result
+            }
+            
+            currentOperation = operation
+            
+        } else {
+            
+            leftValString = runningNumber
+            runningNumber = ""
+            currentOperation = operation
+            
         }
         
     }
     
+    @IBAction func onMultiply(sender: UIButton) {
+        processOperation(operation: .Multiply)
+    }
     
     
+    @IBAction func onDivide(sender: UIButton) {
+        processOperation(operation: .Divide)
+    }
+    
+    @IBAction func onAdd(sender: UIButton) {
+        processOperation(operation: .Add)
+    }
+    
+    @IBAction func onSubtract(sender: UIButton) {
+        processOperation(operation: .Subtract)
+    }
+    
+    @IBAction func onEquil(sender: UIButton) {
+        processOperation(operation: currentOperation)
+    }
+        
         func playSound () {
             if btnSound.isPlaying {
                 btnSound.stop()
