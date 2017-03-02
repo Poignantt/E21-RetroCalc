@@ -11,7 +11,7 @@ import AVFoundation
 
 class ViewController: UIViewController {
     
-    var btnSound = AVAudioPlayer()
+    var btnSound: AVAudioPlayer!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,14 +23,23 @@ class ViewController: UIViewController {
         
         do {
           try btnSound = AVAudioPlayer(contentsOf: soundURL)
-            
+            btnSound.prepareToPlay()
         } catch let err as NSError {
-        
-            
+        print(err.debugDescription)
         }
 
+    }
     
-
+    @IBAction func numberPressed(sender: UIButton) {
+        playSound()
+    }
+    
+        func playSound () {
+            if btnSound.isPlaying {
+                btnSound.stop()
+            }
+            btnSound.play()
+        }
 
 }
 
