@@ -58,10 +58,13 @@ class ViewController: UIViewController {
     }
     
     func processOperation(operation: Chode) {
+        playSound()
         if currentOperation != Chode.Empty {
-            playSound()
-            
+            if runningNumber == "nan" || runningNumber == "inf" {
+                runningNumber = ""
+            }
             if runningNumber != "" {
+                
                 rightValString = runningNumber
                 runningNumber = ""
                 
@@ -110,8 +113,16 @@ class ViewController: UIViewController {
     
     @IBAction func onEquil(sender: UIButton) {
         processOperation(operation: currentOperation)
+        currentOperation = Chode.Empty
+        runningNumber = ""
     }
         
+    @IBAction func clrBtn (sender: UIButton) {
+        currentOperation = Chode.Empty
+        runningNumber = ""
+        digOutput.text = "0"
+        playSound()
+    }
         func playSound () {
             if btnSound.isPlaying {
                 btnSound.stop()
